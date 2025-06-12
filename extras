@@ -1,0 +1,46 @@
+REST examples
+
+CREATE
+curl -X POST http://localhost:5000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Bob", "email": "bob@example.com"}'
+
+GET all users
+curl http://localhost:5000/api/users
+
+GET by id
+curl http://localhost:5000/api/users/68495cf15f39d3021e4a4f04
+
+DELETE by id
+curl -X DELETE http://localhost:5000/api/users/68495cf15f39d3021e4a4f04
+
+
+
+mongo
+
+https://cloud.mongodb.com/v2/684953bb56a2e36bf68c8daa#/metrics/replicaSet/68495451298a7d19f80007d4/explorer/mydb/usersdb/find
+
+
+{
+  "name": "myproject",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "dependencies": {
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "packageManager": "yarn@1.22.22"
+}

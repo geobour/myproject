@@ -1,0 +1,27 @@
+# Node modules (exclude from all packages)
+**/node_modules/
+
+# Environment files
+**/.env
+
+# Build outputs
+**/build/
+**/dist/
+.next/
+
+# Logs
+*.log
+yarn-error.log
+npm-debug.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Package managers
+package-lock.json
+.pnp.*

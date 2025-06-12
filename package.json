@@ -1,0 +1,23 @@
+{
+  "name": "myproject",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "dependencies": {
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "packageManager": "yarn@1.22.22"
+}
