@@ -1,4 +1,4 @@
-REST examples
+Examples
 
 CREATE
 curl -X POST http://localhost:5000/api/users \
@@ -14,7 +14,15 @@ curl http://localhost:5000/api/users/68495cf15f39d3021e4a4f04
 DELETE by id
 curl -X DELETE http://localhost:5000/api/users/68495cf15f39d3021e4a4f04
 
+REGISTER
+curl -X POST http://localhost:5000/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Geo", "email":"geo@example.com", "password":"123456"}'
 
+LOGIN
+curl -X POST http://localhost:5000/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"geo@example.com", "password":"123456"}'
 
 mongo
 

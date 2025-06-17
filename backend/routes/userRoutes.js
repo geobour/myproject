@@ -4,6 +4,7 @@ const User = require('../models/User');
 
 const bcrypt = require('bcrypt');
 const authenticateToken = require('../auth/authMiddleware');
+
 // Register route (POST /register)
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;

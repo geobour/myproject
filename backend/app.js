@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
 const logger = require('./logger');
+const app = express();
+const userRoutes = require('./routes/userRoutes');
+const PORT = process.env.PORT || 5000;
 require('dotenv').config();
 
-const app = express();
 
 app.use(cors({
     origin: 'http://localhost:3000', // Adjust if using frontend on another port
@@ -33,11 +35,9 @@ app.use((req, res, next) => {
 });
 
 // Routes
-const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
 
 // DB Connection and Start Server
-const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         logger.info('MongoDB connected');
