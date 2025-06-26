@@ -47,7 +47,10 @@ router.post('/logout', (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await User.find().lean(); // Returns plain JS objects, keeps _id
+
+        // Optional: disable caching for fresh data
+        res.set('Cache-Control', 'no-store');
         res.json(users);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -88,5 +91,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
         res.status(400).json({ error: 'Invalid ID format' });
     }
 });
+
+
 
 module.exports = router;
