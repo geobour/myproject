@@ -9,7 +9,7 @@ function authMiddleware(req, res, next) {
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ error: 'Invalid token' });
-        req.user = user; // Attach decoded user info to request
+        req.user = user;
         next();
     });
 }
