@@ -32,9 +32,9 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <AuthWrapper>
+            // <AuthWrapper>
                 <MainLayout />
-            </AuthWrapper>
+            // </AuthWrapper>
         ),
         children: [
             {
