@@ -6,7 +6,6 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(() => localStorage.getItem('token'));
     const [user, setUser] = useState(null);
 
-    // Decode JWT payload to get user info (simplified)
     useEffect(() => {
         if (token) {
             try {

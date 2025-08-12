@@ -1,6 +1,7 @@
-import { Box, Paper } from '@mui/material'
+import {Box} from '@mui/material'
 import DashboardBottomLeftView from "./DashboardBottomLeftView.jsx";
 import DashboardBottomRightView from "./DashboardBottomRightView.jsx";
+import DashboardTopView from "./DashboardTopView.jsx";
 
 const Dashboard = () => {
     return (
@@ -8,22 +9,16 @@ const Dashboard = () => {
             sx={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gridTemplateRows: '2fr 1fr', // Top: 2/3, Bottom: 1/3
+                gridTemplateRows: '2fr 1fr',
                 gap: 2,
-                height: '100vh', // Full viewport height
+                height: 'auto',
                 p: 2,
             }}
         >
-            {/* Top Full Width */}
-            <Paper elevation={2} sx={{ gridColumn: '1 / 3', p: 2, height: '100%' }}>
-                Top Full Width
-            </Paper>
 
-            {/* Bottom Left */}
-           <DashboardBottomLeftView></DashboardBottomLeftView>
-
-            {/* Bottom Right */}
-           <DashboardBottomRightView></DashboardBottomRightView>
+            <DashboardTopView></DashboardTopView>
+            <DashboardBottomLeftView></DashboardBottomLeftView>
+            <DashboardBottomRightView></DashboardBottomRightView>
         </Box>
     )
 }
