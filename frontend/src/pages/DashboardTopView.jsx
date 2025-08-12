@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
+import React, {useState} from 'react';
+import {useQuery, useMutation} from '@tanstack/react-query';
+import {useForm} from 'react-hook-form';
+import {useSelector, useDispatch} from 'react-redux';
 import {
     addToWishlist,
     removeFromWishlist,
     clearWishlist,
 } from '../store/wishList/wishListSlice.js';
+
 import {
     allMeteoDataQuery,
     deleteAllMeteoDataMutation,
     fetchMeteoDataByLatLonMutation,
 } from '../api/queries/meteodata';
+
 import {
     Paper,
     Typography,
     CircularProgress,
-    Button,
     TextField,
     Box,
     Divider,
@@ -27,13 +28,22 @@ import {
     TableCell,
 } from '@mui/material';
 
+import CustomButton from '../components/CustomButton';
+
 const DashboardTopView = () => {
-    const { isLoading, isError } = useQuery(allMeteoDataQuery);
+    const {data, isLoading, isError} = useQuery(allMeteoDataQuery);
     const deleteAllMutation = useMutation(deleteAllMeteoDataMutation);
     const fetchMeteoMutation = useMutation(fetchMeteoDataByLatLonMutation);
+
     const [fetchedData, setFetchedData] = useState(null);
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: {errors},
+    } = useForm();
+
     const dispatch = useDispatch();
     const wishlist = useSelector((state) => state.wishlist);
 
@@ -50,11 +60,11 @@ const DashboardTopView = () => {
 
         if (!isNaN(lat) && !isNaN(lon)) {
             fetchMeteoMutation.mutate(
-                { lat, lon, date },
+                {lat, lon, date},
                 {
                     onSuccess: (data) => {
                         setFetchedData(data);
-                        reset();
+                        // reset();
                     },
                 }
             );
@@ -62,13 +72,12 @@ const DashboardTopView = () => {
     };
 
     return (
-        <Paper elevation={2} sx={{ gridColumn: '1 / 3', p: 2, height: '100%' }}>
+        <Paper elevation={2} sx={{gridColumn: '1 / 3', p: 2, height: '100%'}}>
             <Typography variant="h6" gutterBottom>
                 Weather Data Record
             </Typography>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Box sx={{ display: 'flex', gap: 2, mb: 2, mt: 1 }}>
+            <Box sx={{ border: '1px solid #ccc', borderRadius: 1, p: 2 }}>
+                <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                     <TextField
                         label="Latitude"
                         {...register('lat', { required: true })}
@@ -87,31 +96,31 @@ const DashboardTopView = () => {
                         {...register('date')}
                         InputLabelProps={{ shrink: true }}
                     />
-                    <Button
+                    <CustomButton
                         type="submit"
                         variant="contained"
-                        color="primary"
+                        color="#1976d2"
                         disabled={fetchMeteoMutation.isLoading}
                     >
                         {fetchMeteoMutation.isLoading ? 'Fetching...' : 'Fetch Weather'}
-                    </Button>
-                </Box>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleDeleteAll}
-                    disabled={deleteAllMutation.isLoading}
-                    sx={{ mb: 2 }}
-                >
-                    {deleteAllMutation.isLoading ? 'Deleting...' : 'Delete All Records'}
-                </Button>
-            </form>
+                    </CustomButton>
+                    <CustomButton
+                        variant="contained"
+                        color="error"
+                        onClick={handleDeleteAll}
+                        disabled={deleteAllMutation.isLoading}
+                    >
+                        {deleteAllMutation.isLoading ? 'Deleting...' : 'Delete All Records'}
+                    </CustomButton>
+                </form>
+            </Box>
 
-            {isLoading && <CircularProgress />}
+
+            {isLoading && <CircularProgress/>}
             {isError && <Typography color="error">Failed to load weather data</Typography>}
 
             {fetchedData ? (
-                <Table sx={{ mb: 3 }}>
+                <Table sx={{mb: 3}}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Temperature (°C)</TableCell>
@@ -128,14 +137,14 @@ const DashboardTopView = () => {
                             <TableCell>{fetchedData.weathercode}</TableCell>
                             <TableCell>{new Date(fetchedData.time).toLocaleString()}</TableCell>
                             <TableCell align="center">
-                                <Button
+                                <CustomButton
                                     variant="outlined"
                                     size="small"
-                                    color="primary"
+                                    color="#1976d2"
                                     onClick={() => dispatch(addToWishlist(fetchedData))}
                                 >
                                     Add to Wishlist
-                                </Button>
+                                </CustomButton>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -143,13 +152,28 @@ const DashboardTopView = () => {
             ) : (
                 !isLoading && <Typography>No weather data fetched yet</Typography>
             )}
-
-            <Divider sx={{ my: 3 }} />
-
-            <Typography variant="h6" gutterBottom>
-                Wishlist
-            </Typography>
-
+            <Divider sx={{my: 3}}/>
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography variant="h6" gutterBottom sx={{ ml: 2 }}>
+                    Wishlist
+                </Typography>
+                {wishlist.length > 0 && (
+                    <CustomButton
+                        variant="outlined"
+                        color="#ff9800"
+                        onClick={() => dispatch(clearWishlist())}
+                        sx={{ mt: 0, mr: 1 }}
+                    >
+                        Clear Wishlist
+                    </CustomButton>
+                )}
+            </Box>
             {wishlist.length === 0 ? (
                 <Typography>No items in wishlist</Typography>
             ) : (
@@ -171,29 +195,18 @@ const DashboardTopView = () => {
                                 <TableCell>{item.weathercode}</TableCell>
                                 <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
                                 <TableCell align="center">
-                                    <Button
+                                    <CustomButton
                                         size="small"
                                         color="error"
                                         onClick={() => dispatch(removeFromWishlist(item))}
                                     >
                                         Remove
-                                    </Button>
+                                    </CustomButton>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-            )}
-
-            {wishlist.length > 0 && (
-                <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => dispatch(clearWishlist())}
-                    sx={{ mt: 1 }}
-                >
-                    Clear Wishlist
-                </Button>
             )}
         </Paper>
     );
