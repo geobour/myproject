@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useQuery, useMutation} from '@tanstack/react-query';
+import {useMutation} from '@tanstack/react-query';
 import {useForm} from 'react-hook-form';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -9,15 +9,12 @@ import {
 } from '../store/wishList/wishListSlice.js';
 
 import {
-    allMeteoDataQuery,
-    deleteAllMeteoDataMutation,
     fetchMeteoDataByLatLonMutation,
 } from '../api/queries/meteodata';
 
 import {
     Paper,
     Typography,
-    CircularProgress,
     TextField,
     Box,
     Divider,
@@ -31,8 +28,6 @@ import {
 import CustomButton from '../components/CustomButton';
 
 const DashboardTopView = () => {
-    const {data, isLoading, isError} = useQuery(allMeteoDataQuery);
-    const deleteAllMutation = useMutation(deleteAllMeteoDataMutation);
     const fetchMeteoMutation = useMutation(fetchMeteoDataByLatLonMutation);
 
     const [fetchedData, setFetchedData] = useState(null);
@@ -47,11 +42,6 @@ const DashboardTopView = () => {
     const dispatch = useDispatch();
     const wishlist = useSelector((state) => state.wishlist);
 
-    const handleDeleteAll = () => {
-        if (window.confirm('Are you sure you want to delete all weather records?')) {
-            deleteAllMutation.mutate();
-        }
-    };
 
     const onSubmit = (formData) => {
         const lat = parseFloat(formData.lat);
@@ -76,17 +66,17 @@ const DashboardTopView = () => {
             <Typography variant="h6" gutterBottom>
                 Weather Data Record
             </Typography>
-            <Box sx={{ border: '1px solid #ccc', borderRadius: 1, p: 2 }}>
-                <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <Box sx={{border: '1px solid #ccc', borderRadius: 1, p: 2}}>
+                <form onSubmit={handleSubmit(onSubmit)} style={{display: 'flex', alignItems: 'center', gap: 16}}>
                     <TextField
                         label="Latitude"
-                        {...register('lat', { required: true })}
+                        {...register('lat', {required: true})}
                         error={!!errors.lat}
                         helperText={errors.lat ? 'Latitude is required' : ''}
                     />
                     <TextField
                         label="Longitude"
-                        {...register('lon', { required: true })}
+                        {...register('lon', {required: true})}
                         error={!!errors.lon}
                         helperText={errors.lon ? 'Longitude is required' : ''}
                     />
@@ -94,7 +84,7 @@ const DashboardTopView = () => {
                         label="Date"
                         type="date"
                         {...register('date')}
-                        InputLabelProps={{ shrink: true }}
+                        InputLabelProps={{shrink: true}}
                     />
                     <CustomButton
                         type="submit"
@@ -104,28 +94,13 @@ const DashboardTopView = () => {
                     >
                         {fetchMeteoMutation.isLoading ? 'Fetching...' : 'Fetch Weather'}
                     </CustomButton>
-                    <CustomButton
-                        variant="contained"
-                        color="error"
-                        onClick={handleDeleteAll}
-                        disabled={deleteAllMutation.isLoading}
-                    >
-                        {deleteAllMutation.isLoading ? 'Deleting...' : 'Delete All Records'}
-                    </CustomButton>
                 </form>
             </Box>
-
-
-            {isLoading && <CircularProgress/>}
-            {isError && <Typography color="error">Failed to load weather data</Typography>}
-
-            {fetchedData ? (
+            {fetchedData &&
                 <Table sx={{mb: 3}}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Temperature (°C)</TableCell>
-                            <TableCell>Wind Speed (km/h)</TableCell>
-                            <TableCell>Weather Code</TableCell>
                             <TableCell>Time</TableCell>
                             <TableCell align="center">Wishlist</TableCell>
                         </TableRow>
@@ -133,8 +108,6 @@ const DashboardTopView = () => {
                     <TableBody>
                         <TableRow>
                             <TableCell>{fetchedData.temperature}</TableCell>
-                            <TableCell>{fetchedData.windspeed}</TableCell>
-                            <TableCell>{fetchedData.weathercode}</TableCell>
                             <TableCell>{new Date(fetchedData.time).toLocaleString()}</TableCell>
                             <TableCell align="center">
                                 <CustomButton
@@ -149,9 +122,7 @@ const DashboardTopView = () => {
                         </TableRow>
                     </TableBody>
                 </Table>
-            ) : (
-                !isLoading && <Typography>No weather data fetched yet</Typography>
-            )}
+            }
             <Divider sx={{my: 3}}/>
             <Box
                 sx={{
@@ -160,7 +131,7 @@ const DashboardTopView = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6" gutterBottom sx={{ ml: 2 }}>
+                <Typography variant="h6" gutterBottom sx={{ml: 2}}>
                     Wishlist
                 </Typography>
                 {wishlist.length > 0 && (
@@ -168,7 +139,7 @@ const DashboardTopView = () => {
                         variant="outlined"
                         color="#ff9800"
                         onClick={() => dispatch(clearWishlist())}
-                        sx={{ mt: 0, mr: 1 }}
+                        sx={{mt: 0, mr: 1}}
                     >
                         Clear Wishlist
                     </CustomButton>
@@ -181,8 +152,6 @@ const DashboardTopView = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>Temperature (°C)</TableCell>
-                            <TableCell>Wind Speed (km/h)</TableCell>
-                            <TableCell>Weather Code</TableCell>
                             <TableCell>Time</TableCell>
                             <TableCell align="center">Actions</TableCell>
                         </TableRow>
@@ -191,8 +160,6 @@ const DashboardTopView = () => {
                         {wishlist.map((item) => (
                             <TableRow key={item.time}>
                                 <TableCell>{item.temperature}</TableCell>
-                                <TableCell>{item.windspeed}</TableCell>
-                                <TableCell>{item.weathercode}</TableCell>
                                 <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
                                 <TableCell align="center">
                                     <CustomButton

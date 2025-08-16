@@ -64,11 +64,11 @@ const router = createBrowserRouter([
             {
                 path: 'users',
                 element: (
-                    <AdminRoute>
+                    // <AdminRoute>
                         <Suspense fallback={<LoadingSpinner fullScreen />}>
                             <Users />
                         </Suspense>
-                    </AdminRoute>
+                    // </AdminRoute>
                 ),
             },
             {
