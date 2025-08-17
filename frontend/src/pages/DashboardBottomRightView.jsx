@@ -1,18 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import { Paper, Typography } from '@mui/material';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import { top10MaxDayQuery } from "../api/queries/meteodata.js";
+import {top10MaxDayQuery} from "../api/queries/meteodata.js";
+import {useSelector} from "react-redux";
 
 const DashboardBottomRightView = () => {
-    // Hardcoded coordinates and date
-    const lat = 50;
-    const lon = 10;
-    const date = "2025-08-13";
 
-    const { data, isLoading, error } = useQuery(top10MaxDayQuery({ lat, lon, date }));
+    const { lat, lon, date } = useSelector((state) => state.filters);
+    const { data, isLoading, error } = useQuery({
+        ...top10MaxDayQuery({ lat, lon, date }),
+        enabled: !!lat && !!lon && !!date,
+    });
 
     if (isLoading) return <Typography>Loading chart...</Typography>;
     if (error) return <Typography color="error">Failed to load chart data</Typography>;
+    if (!data || data.length === 0) return <Typography>No data available for the selected date/location</Typography>;
 
     return (
         <Paper sx={{ p: 2, overflow: 'auto' }}>
