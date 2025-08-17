@@ -21,6 +21,7 @@ import {
     TableBody,
     TableRow,
     TableCell,
+    Collapse,
 } from '@mui/material';
 
 import CustomButton from '../components/CustomButton';
@@ -29,8 +30,15 @@ import { setFilters } from "../store/filters/filters.js";
 const DashboardTopView = () => {
     const fetchMeteoMutation = useMutation(fetchMeteoDataByLatLonMutation);
     const [fetchedData, setFetchedData] = useState(null);
+    const filters = useSelector((state) => state.filters);
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: {
+            lat: filters.lat || '',
+            lon: filters.lon || '',
+            date: filters.date || '',
+        },
+    });
 
     const dispatch = useDispatch();
     const wishlist = useSelector((state) => state.wishlist);
@@ -54,7 +62,10 @@ const DashboardTopView = () => {
         }
     };
 
-    // Define consistent column widths
+    const onAddToWishlist = (data) => {
+        dispatch(addToWishlist({ ...data, id: Date.now() + Math.random() }));
+    };
+
     const colWidths = ['40%', '40%', '20%'];
 
     return (
@@ -115,7 +126,7 @@ const DashboardTopView = () => {
                                     variant="outlined"
                                     size="small"
                                     color="#1976d2"
-                                    onClick={() => dispatch(addToWishlist(fetchedData))}
+                                    onClick={() => onAddToWishlist(fetchedData)}
                                 >
                                     Add to Wishlist
                                 </CustomButton>
@@ -124,52 +135,75 @@ const DashboardTopView = () => {
                     </TableBody>
                 </Table>
             )}
+
+            {/* Wishlist Section */}
             <Divider sx={{ my: 3 }} />
-                <Typography variant="h6" gutterBottom sx={{ ml: 2 }}>
-                    Wishlist
-                </Typography>
-            {wishlist.length === 0 ? (
-                <Typography>No items in wishlist</Typography>
-            ) : (
-                <Box sx={{ maxHeight: 500, overflowY: 'auto', border: '1px solid #ccc', borderRadius: 1 }}>
-                    <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ width: colWidths[0] }}>Temperature (°C)</TableCell>
-                                <TableCell sx={{ width: colWidths[1] }}>Time</TableCell>
-                                <TableCell sx={{ width: colWidths[2] }} align="center">Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {wishlist.map((item) => (
-                                <TableRow key={item.time}>
-                                    <TableCell>{item.temperature}</TableCell>
-                                    <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
-                                    <TableCell align="center">
-                                        <CustomButton
-                                            size="small"
-                                            color="error"
-                                            onClick={() => dispatch(removeFromWishlist(item))}
-                                        >
-                                            Remove
-                                        </CustomButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Box>
-            )}
-            {wishlist.length > 0 && (
-                <CustomButton
-                    variant="outlined"
-                    color="#ff9800"
-                    onClick={() => dispatch(clearWishlist())}
-                    sx={{ mt: 3 }}
+            <Collapse in={true} timeout={300}>
+                <Box
+                    sx={{
+                        border: '1px solid #ccc',
+                        borderRadius: 1,
+                        p: 2,
+                        minHeight: 150,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                    }}
                 >
-                    Clear Wishlist
-                </CustomButton>
-            )}
+                    <Typography variant="h6" gutterBottom>
+                        Wishlist
+                    </Typography>
+
+                    {wishlist.length === 0 ? (
+                        <Typography>No items in wishlist</Typography>
+                    ) : (
+                        <Box
+                            sx={{
+                                maxHeight: 400,
+                                overflowY: 'auto'
+                            }}
+                        >
+                            <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ width: colWidths[0] }}>Temperature (°C)</TableCell>
+                                        <TableCell sx={{ width: colWidths[1] }}>Time</TableCell>
+                                        <TableCell sx={{ width: colWidths[2] }} align="center">Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {wishlist.map((item) => (
+                                        <TableRow key={item.id}>
+                                            <TableCell>{item.temperature}</TableCell>
+                                            <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
+                                            <TableCell align="center">
+                                                <CustomButton
+                                                    size="small"
+                                                    color="error"
+                                                    onClick={() => dispatch(removeFromWishlist(item))}
+                                                >
+                                                    Remove
+                                                </CustomButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Box>
+                    )}
+
+                    {wishlist.length > 0 && (
+                        <CustomButton
+                            variant="outlined"
+                            color="#ff9800"
+                            onClick={() => dispatch(clearWishlist())}
+                            sx={{ alignSelf: 'flex-end', mt: 1 }}
+                        >
+                            Clear Wishlist
+                        </CustomButton>
+                    )}
+                </Box>
+            </Collapse>
         </Paper>
     );
 };

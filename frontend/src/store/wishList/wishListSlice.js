@@ -1,4 +1,3 @@
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const wishlistSlice = createSlice({
@@ -6,11 +5,12 @@ const wishlistSlice = createSlice({
     initialState: [],
     reducers: {
         addToWishlist: (state, action) => {
-            const exists = state.find(item => item.time === action.payload.time);
-            if (!exists) state.push(action.payload);
+            // Always allow adding because each item has a unique `id`
+            state.push(action.payload);
         },
         removeFromWishlist: (state, action) => {
-            return state.filter(item => item.time !== action.payload.time);
+            // Remove by `id`
+            return state.filter(item => item.id !== action.payload.id);
         },
         clearWishlist: () => [],
     },
